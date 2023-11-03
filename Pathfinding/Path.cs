@@ -47,10 +47,10 @@ public class PathTest
         var result3 = Calculate(path3);
         var result4 = Calculate(path4);
         
-        Print(result1);
-        Print(result2);
-        Print(result3);
-        Print(result4);
+        Helpers.Print(result1);
+        Helpers.Print(result2);
+        Helpers.Print(result3);
+        Helpers.Print(result4);
     }
 
     private IEnumerable<ILine> Calculate(IEnumerable<ILine> input)
@@ -63,14 +63,5 @@ public class PathTest
         var path = AStar.GetPath(graph, start, end);
         
         return path;
-    }
-
-    private void Print(IEnumerable<ILine> input)
-    {
-        foreach (var item in input)
-        {
-            Console.WriteLine($"[{item.Start.X},{item.Start.Y}] -> [{item.End.X},{item.End.Y}]");
-        }
-        Console.WriteLine("----------");
     }
 }

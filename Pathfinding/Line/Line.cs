@@ -2,8 +2,8 @@ namespace Pathfinding;
 
 public class Line : ILine
 {
-    public IPointD Start { get; }
-    public IPointD End { get; }
+    public IPointD Start { get; private set; }
+    public IPointD End { get; private set; }
     public double Length { get; }
 
     public Line(IPointD start, IPointD end)
@@ -15,6 +15,6 @@ public class Line : ILine
     
     public void Reverse()
     {
-        
+        (Start, End) = (End, Start);
     }
 }
