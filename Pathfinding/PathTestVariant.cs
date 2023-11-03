@@ -17,8 +17,6 @@ public class PathTestVariant
         Console.WriteLine("------------------------------------------");
         
         var resultTake2 = CollectLines.ExecuteTake2(path);
-        Console.WriteLine(resultTake2);
-        
         Helpers.Print(resultTake2);
     }
 }

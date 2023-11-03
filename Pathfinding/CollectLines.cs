@@ -6,6 +6,7 @@ public static class CollectLines
 
     private static Leaf BestLeaf;
     
+    // too greedy
     public static IEnumerable<ILine> ExecuteTake2(List<ILine> lines)
     {
         BestLeaf = new Leaf(null, double.MaxValue, null, false);
