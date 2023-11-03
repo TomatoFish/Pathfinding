@@ -4,16 +4,21 @@ public class PathTestVariant
 {
     public PathTestVariant()
     {
-        var path1 = new List<ILine>()
+        var r = new Random();
+        var path = new List<ILine>();
+        for (int i = 0; i < 5; i++)
         {
-            new Line(new PointD(0, 0), new PointD(1, 1)),
-            new Line(new PointD(5, 8), new PointD(6, 3)),
-            new Line(new PointD(2, 4), new PointD(10, 7)),
-            new Line(new PointD(1, 8), new PointD(8, 1))
-        };
+            path.Add(new Line(new PointD(r.Next(), r.Next()), new PointD(r.Next(), r.Next())));
+        }
         
-        var result1 = CollectLines.Execute(path1);
+        var resultTake1 = CollectLines.ExecuteTake1(path);
+        Helpers.Print(resultTake1);
         
-        Helpers.Print(result1);
+        Console.WriteLine("------------------------------------------");
+        
+        var resultTake2 = CollectLines.ExecuteTake2(path);
+        Console.WriteLine(resultTake2);
+        
+        Helpers.Print(resultTake2);
     }
 }
