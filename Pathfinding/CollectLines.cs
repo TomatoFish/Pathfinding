@@ -4,6 +4,58 @@ public static class CollectLines
 {
     #region take1
 
+    public static IEnumerable<ILine> ExecuteTake1(List<ILine> lines)
+    {
+        var path = new KeyValuePair<ILine, double>[lines.Count]; // line and distance to next
+        var restLines = new List<ILine>(lines);                     // not visited lines
+        var currentLine = restLines.First();                // next line to connect to
+        restLines.Remove(currentLine);
+        
+        // building path by connecting all line ends
+        for (int i = 0, restLinesCount = restLines.Count; i < restLinesCount; i++)
+        {
+            var foundDistance = GetDistanceToNearest(currentLine.End, restLines, out var foundLine);
+            path[i] = new KeyValuePair<ILine, double>(currentLine, foundDistance);
+            currentLine = foundLine;
+            restLines.Remove(currentLine);
+        }
+        path[^1] = new KeyValuePair<ILine, double>(currentLine, currentLine.End.GetDistance(path.First().Key.Start));
+
+        // rebuilding path after removing longest connection between lines
+        var resultPath = new List<ILine>();
+        var next = path.MinBy(x => x.Value);
+        var nextIndex = Array.IndexOf(path, next);
+        resultPath.AddRange(path[nextIndex..].Select(p => p.Key));
+        resultPath.AddRange(path[..^(resultPath.Count)].Select(p => p.Key));
+        
+        return resultPath;
+    }
+
+    private static double GetDistanceToNearest(IPointD point, List<ILine> lines, out ILine foundLine)
+    {
+        var minDistance = double.MaxValue;
+        foundLine = null;
+        foreach (var line in lines)
+        {
+            var distanceToStart = point.GetDistance(line.Start);
+            var distanceToEnd = point.GetDistance(line.End);
+            var distanceToLine = Math.Min(distanceToStart, distanceToEnd);
+            if (distanceToLine < minDistance)
+            {
+                minDistance = distanceToLine;
+                if (distanceToStart > distanceToEnd)
+                    line.Reverse();
+                foundLine = line;
+            }
+        }
+
+        return minDistance;
+    }
+    
+    #endregion
+
+    #region take2
+
     private static Leaf BestLeaf;
     
     // too greedy
@@ -69,59 +121,7 @@ public static class CollectLines
     }
     
     #endregion
-
-    #region take2
-
-    public static IEnumerable<ILine> ExecuteTake1(List<ILine> lines)
-    {
-        var path = new KeyValuePair<ILine, double>[lines.Count]; // line and distance to next
-        var restLines = new List<ILine>(lines);                     // not visited lines
-        var currentLine = restLines.First();                // next line to connect to
-        restLines.Remove(currentLine);
-        
-        // building path by connecting all line ends
-        for (int i = 0, restLinesCount = restLines.Count; i < restLinesCount; i++)
-        {
-            var foundDistance = GetDistanceToNearest(currentLine.End, restLines, out var foundLine);
-            path[i] = new KeyValuePair<ILine, double>(currentLine, foundDistance);
-            currentLine = foundLine;
-            restLines.Remove(currentLine);
-        }
-        path[^1] = new KeyValuePair<ILine, double>(currentLine, currentLine.End.GetDistance(path.First().Key.Start));
-
-        // rebuilding path after removing longest connection between lines
-        var resultPath = new List<ILine>();
-        var next = path.MinBy(x => x.Value);
-        var nextIndex = Array.IndexOf(path, next);
-        resultPath.AddRange(path[nextIndex..].Select(p => p.Key));
-        resultPath.AddRange(path[..^(resultPath.Count)].Select(p => p.Key));
-        
-        return resultPath;
-    }
-
-    private static double GetDistanceToNearest(IPointD point, List<ILine> lines, out ILine foundLine)
-    {
-        var minDistance = double.MaxValue;
-        foundLine = null;
-        foreach (var line in lines)
-        {
-            var distanceToStart = point.GetDistance(line.Start);
-            var distanceToEnd = point.GetDistance(line.End);
-            var distanceToLine = Math.Min(distanceToStart, distanceToEnd);
-            if (distanceToLine < minDistance)
-            {
-                minDistance = distanceToLine;
-                if (distanceToStart > distanceToEnd)
-                    line.Reverse();
-                foundLine = line;
-            }
-        }
-
-        return minDistance;
-    }
     
-    #endregion
-
     private static double GetDistance(this IPointD from, IPointD to)
     {
         return Math.Sqrt(Math.Pow(to.X - from.X, 2) + Math.Pow(to.Y - from.Y, 2));
